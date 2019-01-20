@@ -1,3 +1,5 @@
+const co = require('co');
+
 function openFile(file) {
     return Promise.resolve(myfile);
 }
@@ -29,15 +31,16 @@ const myfile = {
     ]
 };
 
-async function run() {
-    const file = await openFile('myfile');
-    const lines = await readFile(file);
-    const newFile = await createFile('otherFile');
-    lines.reverse();
-    await Promise.all(lines.map(line =>
-        writeLine(line + ' 🤪', newFile)
-    ));
-    await closeFile(newFile);
-}
-
-run();
+openFile('myfile')
+    .then(readFile)
+    .then((lines) =>
+            createFile('otherFile')
+                .then((newFile) => {
+                    lines.reverse();
+                    return Promise.all(lines.map(line =>
+                        writeLine(line + ' 🤪', newFile)
+                    ))
+                    .then(() => newFile);
+                })
+                .then(closeFile)
+        );

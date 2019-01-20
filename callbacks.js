@@ -28,17 +28,3 @@ const myfile = {
         'This is a third line',
     ]
 };
-
-openFile('myfile', (error, file) => {
-    readFile(file, (error, lines) => {
-        createFile('otherFile', (error, newFile) => {
-            lines.reverse();
-            lines.forEach(line => {
-                const newLine = line + ' 🤪';
-                writeLine(newLine, newFile, (error) => {
-                });
-            });
-            // comment on ferme le fichier ?
-        });
-    }); 
-});

@@ -1,24 +1,24 @@
-function openFile(file) {
-    return Promise.resolve(myfile);
+function openFile(file, callback) {
+    callback(null, myfile);
 }
 
-function readFile(file) {
-    return Promise.resolve(file.lines);
+function readFile(file, callback) {
+    callback(null, file.lines);
 }
 
-function createFile(name) {
-    return Promise.resolve({lines: [] });
+function createFile(name, callback) {
+    callback(null, {lines: [] });
 }
 
-function writeLine(line, file) {
+function writeLine(line, file, callback) {
     file.lines.push(line);
     console.log(line);
-    return Promise.resolve();
+    callback();
 }
 
-function closeFile(file) {
+function closeFile(file, callback) {
     console.log('end. 🤪');
-    return Promise.resolve();
+    callback();
 }
 
 const myfile = {
@@ -29,16 +29,16 @@ const myfile = {
     ]
 };
 
-openFile('myfile')
-    .then(readFile)
-    .then((lines) =>
-            createFile('otherFile')
-                .then((newFile) => {
-                    lines.reverse();
-                    return Promise.all(lines.map(line =>
-                        writeLine(line + ' 🤪', newFile)
-                    ))
-                    .then(() => newFile);
-                })
-                .then(closeFile)
-        );
+openFile('myfile', (error, file) => {
+    readFile(file, (error, lines) => {
+        createFile('otherFile', (error, newFile) => {
+            lines.reverse();
+            lines.forEach(line => {
+                const newLine = line + ' 🤪';
+                writeLine(newLine, newFile, (error) => {
+                });
+            });
+            // comment on ferme le fichier ?
+        });
+    }); 
+});
